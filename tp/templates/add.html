@@ -1,14 +1,13 @@
 <!DOCTYPE html>
 <html lang="en">
-    {%load static%}
+    {% load static %}
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="{% static 'css/bootstrap.min.css' %}">
-    <title>DETAILS</title>
+    <title>add</title>
 </head>
 <body>
-
     <nav class="navbar navbar-expand-lg bg-body-tertiary" style="background-color: #007BFF;">
         <div class="container-fluid" >
           <a class="navbar-brand" href="#" style="color: aliceblue;">E-STORE</a>
@@ -18,13 +17,7 @@
           <div class="collapse navbar-collapse" id="navbarSupportedContent">
             <ul class="navbar-nav me-auto mb-2 mb-lg-0">
               <li class="nav-item">
-                <a class="nav-link active" aria-current="page" href="{% url 'home' %}" style="color: white;">Home</a>
-              </li>
-              <li class="nav-item">
-                <a class="nav-link" href="{% url 'add' %}" style="color: white;">ADD</a>
-              </li>
-              <li class="nav-item">
-                <a class="nav-link" href="{% url 'pannier' %}" style="color: white;">pannier</a>
+                <a class="nav-link active" aria-current="page" href="{% url 'home'%}" style="color: white;">Home</a>
               </li>
             </ul>
             <form class="d-flex" role="search" method="POST" action="{% url 'search' %}">
@@ -49,38 +42,27 @@
           </div>
         </div>
     </nav>
+
     <center>
-        
-        <div class="card" style="width: 20rem; margin: 10px; border-color:	#ADD8E6; border-width: 2px;">
-            {% if products.quantite > 0 %}
-                <img src="{{ products.image.url }}" class="card-img-top" alt="product.name">
-                <div class="card-body">
-           
-                    <h5 class="card-title">product details</h5>
-                    <p class="card-text">{{products.name}}</p>
-                    <p class="card-text">{{products.description}}</p>
-                    <p class="card-text">price : {{products.price}} da</p>
-                    <a href="{% url 'get' products.id  %}" class="btn btn-primary">add to cart</a>
-                    <a href="{% url 'home' %}" class="btn btn-primary">Go back</a>
-                </div>
-            {%else%}
-                <img src="{{ products.image.url }}" class="card-img-top" alt="product.name" style="opacity: 0.3;">
-                <div class="card-body">
-                    <h5 class="card-title">product details</h5>
-                    <h2>OUT OF STOCK</h2>
-                    <p class="card-text">{{products.name}}</p>
-                    <p class="card-text">{{products.description}}</p>
-                    <p class="card-text">price : {{products.price}} da</p>
-                    <a href="{% url 'home' %}" class="btn btn-primary">Go back</a>
-                </div>
-            {% endif %}    
-                
-            
+        <h1 style="padding-top: 20px;">add a product</h1>
+
+        <div class="card" style="width: 25rem; padding-top: 20px;">
+            <div class="card-body">
+              <h4 class="card-title">ADD</h4>
+                <form method="POST">
+                    {% csrf_token %}
+    
+                    {{form.as_p}}
+                    <input type="submit" value="submit" class="btn btn-success">
+                    <a href="{% url 'home'%}" class="btn btn-primary">Go back</a>
+                </form>
+              
+              {{message}}
+            </div>
         </div>
+      
     </center>
 
-    
-    
 
     <script src="{% static 'js/bootstrap.bundle.min.js' %}"> </script>
 </body>
