@@ -10,8 +10,13 @@ from io import BytesIO
 # Create your views here.
 
 def home(request):
+    username = request.POST.get('username')
+    role = request.POST.get('role')
     products = product.objects.all()
-    return render(request , 'home.html' , {'products' : products})
+    return render(request , 'home.html' , {'products' : products, 'username' : username, 'role' : role})
+
+def login(request):
+    return render(request , 'login.html')
 
 def details(request , prod_id , quantite):
     products = product.objects.get(id = prod_id)
