@@ -1,6 +1,7 @@
 from django.http import HttpResponse
 from django.shortcuts import render , redirect
-from .models import product,client, acheter # Import the Product model
+from django.views.decorators.csrf import csrf_exempt
+from .models import product,User, acheter # Import the Product model
 from .forms import  productform
 from django.conf import settings
 import stripe
@@ -9,14 +10,59 @@ from reportlab.pdfgen import canvas
 from io import BytesIO
 # Create your views here.
 
-def home(request):
-    username = request.POST.get('username')
-    role = request.POST.get('role')
-    products = product.objects.all()
-    return render(request , 'home.html' , {'products' : products, 'username' : username, 'role' : role})
 
-def login(request):
-    return render(request , 'login.html')
+def same_page():
+    return HttpResponse(status=204)
+
+STATUS_OK = 0
+STATUS_OTHER = 1
+def login_page(request,  context={'status': STATUS_OK}):
+    return render(request, 'login.html', {'client_role': User.Role.CLIENT, 'seller_role': User.Role.SELLER, **context})
+    
+def login_page_view(request):
+    return login_page(request)
+
+
+def login_view(request):
+    username = request.POST.get('username')
+    password = request.POST.get('password')
+    role = request.POST.get('role')
+
+    authenticated, user = User.authenticate(username, password, role)
+    
+    if authenticated:
+        return home(request, user)
+    
+    return login_page(request, {'status': STATUS_OTHER, 'message': 'Invalid credentials'})
+
+def signin_view(request):
+    username = request.POST.get('username')
+    password = request.POST.get('password')
+    role = request.POST.get('role')
+
+    user = User.get(username)
+    if user is not None:
+        print("User already exists")
+        return login_page(request, {'status': STATUS_OTHER, 'message': 'User already exists'})
+
+    User.create(username, password, int(role))
+    print(username , password , role)
+
+    return login_page(request, {'status': 1, 'message': 'User created successfully'})
+
+
+def home(request, user):
+    products = product.objects.all()
+    return render(request , 'home.html' , {
+        'products' : products, 'username' : user.get_username(), 'role' : user.get_role(), 
+        'Role': User.Role })
+
+def cart(request):
+    return HttpResponse("Cart view of user client")
+
+def cart_view(request):
+    return cart(request)
+
 
 def details(request , prod_id , quantite):
     products = product.objects.get(id = prod_id)

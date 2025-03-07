@@ -3,19 +3,25 @@
 <html lang="en">
 <head>
 	{% load static %}
+
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 	<title>Document</title>
 </head>
 <body>
 	
-	<form method="POST" action="{% url 'home' %}">	
+	<form method="POST" >	
 		{% csrf_token %}
 		<input type="text" name="username" placeholder="Username" required>
-		<input type="password" name="password" placeholder="Password" required>
-		<input type="radio" name="role" value="client" required>Client
-		<input type="radio" name="role" value="seller" required>Seller
-		<button type="submit">Login</button>
+		<input type="text" name="password" placeholder="Password" required>
+		<input type="radio" name="role" value="{{ client_role }}" required>Client
+		<input type="radio" name="role" value="{{ seller_role }}" required>Seller
+		<button type="submit" formaction="{% url 'login' %}">Login</button>
+		<button type="submit" formaction="{% url 'signin' %}">Signin</button>
+		{% if status != 0 %}
+			<div>{{ message }}</div>
+		{% endif %}
+
 	</form>
 
 </body>
